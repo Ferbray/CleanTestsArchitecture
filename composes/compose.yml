@@ -1,0 +1,26 @@
+services:
+  example-psql:
+    image: postgres:latest
+    container_name: example-psql
+    hostname: psql
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_HOST: example
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+  example-api:
+    image: exampleapi
+    hostname: example-api
+    container_name: example-api
+    restart: always
+    build:
+      context: ../
+      dockerfile: src/Example.WebApi/Dockerfile
+    depends_on:
+      - example-psql
+    environment:
+      ConnectionStrings__Postgres: 'Host=psql;Port=5432;Database=example;Username=postgres;Password=postgres;Pooling=true;'
+    ports:
+      - 5000:8080
